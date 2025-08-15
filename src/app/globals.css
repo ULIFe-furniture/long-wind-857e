@@ -2,32 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Import Segoe UI font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;500;600;700&display=swap');
+
+/* Define custom color variables for the ULIFe theme */
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+  --color-bg-base: #E8E8E5; /* Creme tone for page background */
+  --color-accent: #BAAD98; /* Biscuit tone for panels and inputs */
+  --color-text: #7B614E;   /* Warm brown for text */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
-
+/* Apply the custom font and colors globally */
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: var(--color-bg-base);
+  color: var(--color-text);
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Utility class for accent panels and form elements */
+.accent-bg {
+  background-color: var(--color-accent);
+  color: var(--color-text);
+}
+
+.accent-text {
+  color: var(--color-accent);
 }
