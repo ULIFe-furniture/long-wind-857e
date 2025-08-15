@@ -1,0 +1,72 @@
+:root{
+  /* Bề mặt */
+  --nen-0:#F3F4F5; --nen-1:#E9EBED; --nen-2:#D6D6D6; --nen-3:#B3B3B3;
+  --nen-lanh:#A8B0B2; --nen-am:#C5BFB8;
+  --divider:#C7C9CC; --vien:#B0B5B9;
+  --shadow-s: rgba(16,24,40,.08); --shadow-l: rgba(16,24,40,.16);
+
+  /* Chữ */
+  --chu-chinh:#1F2328; --chu-phu:#4B5056; --chu-mo:#7A8087; --chu-dao:#FFFFFF;
+
+  /* Chủ đạo */
+  --primary:#2F4F3E; --primary-h:#264638; --primary-a:#1E362A; --primary-weak:#E4EEE9;
+  --secondary:#8B5E3C;
+
+  /* Nút & link */
+  --btn-bg:var(--primary); --btn-text:#FFFFFF; --btn-h:var(--primary-h); --btn-a:var(--primary-a);
+  --btn-outline-bg:transparent; --btn-outline-text:var(--primary); --btn-outline-border:var(--primary);
+  --link:var(--primary); --link-h:var(--primary-a); --link-v:#3E5F4E;
+
+  /* Trạng thái */
+  --ok:#2E7D32; --ok-bg:#E9F6EC; --ok-text:#0C3C12;
+  --warn:#ED9B00; --warn-bg:#FFF4E0; --warn-text:#5A3A00;
+  --err:#C62828; --err-bg:#FDECEC; --err-text:#5A0D0D;
+  --info:#1E88E5; --info-bg:#E8F0FE; --info-text:#0A3978;
+}
+
+/* Cơ bản */
+body.theme-ulife{background:var(--nen-0); color:var(--chu-chinh);} 
+a{color:var(--link);} a:hover{color:var(--link-h);} a:visited{color:var(--link-v);}
+
+/* Header + thanh điều hướng */
+.ul-header{background:var(--nen-1); border-bottom:1px solid var(--divider);} 
+.ul-header .ul-nav a{color:var(--chu-chinh);} 
+.ul-header .ul-nav a:hover{color:var(--primary);} 
+
+/* Topbar/secondary header (ắt có) */
+.ul-topbar{background:var(--nen-3); color:var(--chu-phu);} 
+
+/* Hero/Banner với biến thể nền */
+.ul-hero{padding:48px 0; background:var(--nen-2);} 
+.ul-hero[data-palette="cool"]{background:var(--nen-lanh);} 
+.ul-hero[data-palette="warm"]{background:var(--nen-am);} 
+
+/* Bộ sưu tập */
+.ul-collection{background:var(--nen-0);} 
+
+/* Card sản phẩm */
+.ul-card{background:#fff; border:1px solid var(--divider); border-radius:10px;
+  box-shadow:0 4px 16px var(--shadow-s); overflow:hidden;} 
+.ul-card .ul-card__title{color:var(--chu-chinh);} 
+.ul-card .ul-card__price{color:var(--chu-phu);} 
+.ul-card .ul-card__btn{background:var(--btn-bg); color:var(--btn-text); border:none; padding:.75rem 1rem; border-radius:8px;} 
+.ul-card .ul-card__btn:hover{background:var(--btn-h);} 
+.ul-card .ul-card__btn:active{background:var(--btn-a);} 
+.ul-card .ul-card__btn--outline{background:var(--btn-outline-bg); color:var(--btn-outline-text); border:1px solid var(--btn-outline-border);} 
+.ul-card .ul-card__btn--outline:hover{background:var(--primary-weak);} 
+
+/* Footer */
+.ul-footer{background:var(--nen-3); color:var(--chu-phu); border-top:1px solid var(--divider);} 
+.ul-footer a{color:var(--primary);} .ul-footer a:hover{color:var(--primary-a);} 
+
+/* Bảng hàng xen kẽ */
+.table-striped{width:100%; border-collapse:collapse; border:1px solid var(--divider);} 
+.table-striped th, .table-striped td{padding:12px 16px; border-bottom:1px solid var(--divider);} 
+.table-striped tbody tr:nth-child(odd){background:#FFFFFF;} 
+.table-striped tbody tr:nth-child(even){background:#F7F7F7;} 
+
+/* Thông báo trạng thái */
+.alert-ok{background:var(--ok-bg); color:var(--ok-text); border:1px solid var(--ok);} 
+.alert-warn{background:var(--warn-bg); color:var(--warn-text); border:1px solid var(--warn);} 
+.alert-err{background:var(--err-bg); color:var(--err-text); border:1px solid var(--err);} 
+.alert-info{background:var(--info-bg); color:var(--info-text); border:1px solid var(--info);}
