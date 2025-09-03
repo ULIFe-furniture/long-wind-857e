@@ -1,6 +1,6 @@
 ### Mục tiêu
 - [ ] (Sau PR#2) Toàn bộ route chạy `export const runtime = 'edge'`
-- [ ] Không còn `runtime = 'nodejs'`
+- [ ] Không còn `runtime = 'edge'`
 - [ ] Không import Node core ở runtime (fs/path/net/tls/child_process/crypto/stream)
 
 ### Screenshot (nếu có UI)
