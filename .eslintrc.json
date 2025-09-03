@@ -1,3 +1,9 @@
 {
-  "extends": "next/core-web-vitals"
+  "root": true,
+  "extends": ["next", "next/core-web-vitals"],
+  "rules": {
+    "no-restricted-imports": ["error", {
+      "paths": ["fs","path","child_process","net","tls","crypto","stream","http","https","zlib","vm"]
+    }]
+  }
 }
