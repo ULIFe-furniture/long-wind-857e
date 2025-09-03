@@ -60,5 +60,5 @@ jobs:
         continue-on-error: ${{ !env.ENFORCE }}
 
       - name: Build Cloudflare Pages
-        run: npx @cloudflare/next-on-pages@latest build
+        run: npx @cloudflare/next-on-pages@latest
         continue-on-error: ${{ !env.ENFORCE }}
