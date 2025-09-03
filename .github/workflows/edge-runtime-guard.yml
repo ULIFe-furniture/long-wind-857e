@@ -45,12 +45,10 @@ jobs:
       - name: Fail nếu còn runtime='nodejs'
         shell: bash
         run: |
-         # Tìm trong mọi file .ts/.tsx, trừ node_modules
-         if git grep -n "runtime *= *['\"]nodejs['\"]" -- '*.ts*' ":!node_modules" ; then
+          if git grep -n "runtime *= *['\"]nodejs['\"]" -- '*.ts*' ":!node_modules" ; then
           echo "::error::Found runtime='nodejs'"
-          exit 1
-         fi
-        continue-on-error: ${{ env.ENFORCE }}
+          exit 1; fi
+        continue-on-error: ${{ !env.ENFORCE }}
 
 
       - name: Build Next
