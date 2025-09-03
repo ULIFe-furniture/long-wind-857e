@@ -1,59 +1,44 @@
 name: edge-runtime-guard
-
 on:
   pull_request:
     branches: [ main, master ]
-
 env:
   ENFORCE: ${{ contains(github.event.pull_request.title, '[enforce-guards]') }}
-
 jobs:
   check:
     runs-on: ubuntu-latest
-    continue-on-error: ${{ env.ENFORCE != 'true' }}
+    continue-on-error: ${{ !env.ENFORCE }}
     steps:
       - uses: actions/checkout@v4
-
-      - name: Detect package manager
+      - name: Detect PM
         id: pm
         shell: bash
         run: |
-          if [ -f pnpm-lock.yaml ]; then echo "PM=pnpm" >> $GITHUB_ENV;
-          elif [ -f yarn.lock ]; then echo "PM=yarn" >> $GITHUB_ENV;
-          else echo "PM=npm" >> $GITHUB_ENV; fi
-
+          if [ -f pnpm-lock.yaml ]; then echo PM=pnpm >> $GITHUB_ENV;
+          elif [ -f yarn.lock ]; then echo PM=yarn >> $GITHUB_ENV;
+          else echo PM=npm >> $GITHUB_ENV; fi
       - uses: pnpm/action-setup@v4
         if: env.PM == 'pnpm'
-        with:
-          version: 9
-
+        with: { version: 9 }
       - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: ${{ env.PM }}
-
-      - name: Install deps
+        with: { node-version: 20, cache: ${{ env.PM }} }
+      - name: Install
         shell: bash
         run: |
-          if [ "$PM" = "pnpm" ]; then pnpm i --frozen-lockfile;
-          elif [ "$PM" = "yarn" ]; then yarn install --frozen-lockfile;
+          if [ "$PM" = "pnpm" ] ; then pnpm i --frozen-lockfile;
+          elif [ "$PM" = "yarn" ] ; then yarn install --frozen-lockfile;
           else npm ci; fi
-
-      - name: ESLint – cấm import Node core
-        run: npx eslint . --max-warnings=0
-
+      - run: npx eslint . --max-warnings=0
       - name: Fail nếu còn runtime='nodejs'
         shell: bash
         run: |
-          if git grep -n "runtime *= *['\"']nodejs['\"']" -- ':!node_modules' ; then
+          if git grep -n "runtime *= *['\"]nodejs['\"]" -- ':!node_modules' ; then
             echo "::error::Found runtime='nodejs'"; exit 1; fi
-
       - name: Build Next
         shell: bash
         run: |
-          if [ "$PM" = "pnpm" ]; then pnpm next build;
-          elif [ "$PM" = "yarn" ]; then yarn next build;
+          if [ "$PM" = "pnpm" ] ; then pnpm next build;
+          elif [ "$PM" = "yarn" ] ; then yarn next build;
           else npx next build; fi
-
-      - name: Build Cloudflare Pages (@cloudflare/next-on-pages)
+      - name: Build Cloudflare Pages
         run: npx @cloudflare/next-on-pages@latest build
