@@ -13,22 +13,23 @@
     "preview_image_url": "https://imagedelivery.net/wSMYJvS3Xw-n339CbDyDIA/e42eec61-db86-49c8-7b29-c3ed4783e400/public"
   },
   "dependencies": {
-    "next": "14.2.23",
-    "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "next": "^15.5.2",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "4.20250204.0",
-    "@opennextjs/cloudflare": "0.5.3",
-    "@types/node": "22.9.1",
-    "@types/react": "18.3.12",
-    "@types/react-dom": "18.3.1",
-    "eslint": "8.56.0",
-    "eslint-config-next": "14.2.5",
-    "postcss": "8.4.49",
-    "tailwindcss": "3.4.17",
-    "typescript": "5.7.2",
-    "wrangler": "3.107.3"
+    "@cloudflare/workers-types": "4.20250905.0",
+    "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "24.3.1",
+    "@types/react": "19.1.12",
+    "@types/react-dom": "19.1.9",
+    "autoprefixer": "^10.4.21",
+    "eslint": "9.34.0",
+    "eslint-config-next": "15.5.2",
+    "postcss": "8.5.6",
+    "tailwindcss": "4.1.13",
+    "typescript": "5.9.2",
+    "wrangler": "^4.34.0"
   },
   "scripts": {
     "build": "next build",

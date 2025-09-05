@@ -1,0 +1,76 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+/** Trả lời Zalo OA */
+async function replyZalo(userId: string, text: string, token: string) {
+  await fetch('https://openapi.zalo.me/v3.0/oa/message', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', access_token: token },
+    body: JSON.stringify({
+      recipient: { user_id: userId },
+      message:   { text }
+    })
+  });
+}
+
+/** Trả lời Facebook Messenger */
+async function replyFB(senderId: string, text: string, token: string) {
+  await fetch(`https://graph.facebook.com/v18.0/me/messages?access_token=${token}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      recipient: { id: senderId },
+      message:   { text }
+    })
+  });
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const payload = await req.json();
+
+    /** Xác định platform & message */
+    let platform: 'zalo' | 'facebook';
+    let message  = '';
+    let target   = '';
+
+    if (payload.user_id && payload.message?.text) {
+      platform = 'zalo';
+      message  = payload.message.text;
+      target   = payload.user_id;
+    } else if (payload.entry?.[0]?.messaging?.[0]?.message?.text) {
+      platform = 'facebook';
+      message  = payload.entry[0].messaging[0].message.text;
+      target   = payload.entry[0].messaging[0].sender.id;
+    } else {
+      return NextResponse.json({ error: 'Payload không hợp lệ' }, { status: 400 });
+    }
+
+    /** Gọi OpenAI */
+    const openaiRes = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY!}`
+      },
+      body: JSON.stringify({
+        model: 'gpt-3.5-turbo',
+        messages: [{ role: 'user', content: message }],
+        max_tokens: 200
+      })
+    });
+    const aiReply =
+      (await openaiRes.json()).choices?.[0]?.message?.content
+      ?? 'Xin lỗi, hệ thống bận.';
+
+    /** Gửi trả */
+    if (platform === 'zalo') {
+      await replyZalo(target, aiReply, process.env.ZALO_OA_ACCESS_TOKEN!);
+    } else {
+      await replyFB(target, aiReply, process.env.FB_PAGE_ACCESS_TOKEN!);
+    }
+
+    return NextResponse.json({ platform, aiReply });
+  } catch {
+    return NextResponse.json({ error: 'Lỗi xử lý webhook' }, { status: 500 });
+  }
+}
