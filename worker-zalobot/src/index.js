@@ -15,7 +15,7 @@ import { parseZaloBotWebhook, toBrainBody } from "./normalize.js";
 import * as zalobot from "./zalobot.js";
 import { askBrain } from "./brain.js";
 
-export default {
+const worker = {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname.replace(/\/+$/, "") || "/";
@@ -35,6 +35,8 @@ export default {
     return json({ ok: false, error: "NOT_FOUND" }, 404);
   },
 };
+
+export default worker;
 
 async function handleWebhook(request, env, ctx) {
   // Verify secret header (nếu đã đặt ZALOBOT_WEBHOOK_SECRET).
