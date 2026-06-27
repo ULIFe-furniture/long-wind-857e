@@ -1,0 +1,78 @@
+{
+  "name": "ULIFe — Shopify → Zalo OA sync",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            { "field": "hours", "hoursInterval": 24 }
+          ]
+        }
+      },
+      "id": "node-schedule",
+      "name": "Lịch chạy",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://{{ $vars.SHOPIFY_SHOP }}/admin/api/2024-01/products.json?limit=5&status=active",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-Shopify-Access-Token", "value": "={{ $vars.SHOPIFY_ADMIN_TOKEN }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "node-shopify",
+      "name": "Shopify - Lấy sản phẩm",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lấy tối đa 5 sản phẩm mới nhất, dựng 1 đoạn nội dung cho bài đăng OA.\nconst items = ($input.first().json.products || []).slice(0, 5);\nconst shop = $vars.SHOPIFY_STORE_URL || 'https://noithatgotunhien-ulife.com';\nfunction vnd(v){ const n = Number(v||0); return n ? n.toLocaleString('vi-VN') + 'đ' : 'liên hệ'; }\nconst lines = items.map(p => {\n  const price = (p.variants && p.variants[0] && p.variants[0].price) || 0;\n  return `• ${p.title} — ${vnd(price)}`;\n});\nconst text = `🌿 ULIFe — Mẫu nội thất gỗ thông tự nhiên mới\\n\\n` +\n  lines.join('\\n') +\n  `\\n\\nĐặt làm theo yêu cầu cho quán cà phê, nhà hàng & gia đình.\\n` +\n  `Xem thêm: ${shop}\\n☎️ 0815 006 531 (8h–18h)`;\nconst firstImg = (items[0] && items[0].image && items[0].image.src) || '';\nreturn [{ json: { oa_text: text, image_url: firstImg, count: items.length } }];"
+      },
+      "id": "node-format",
+      "name": "Định dạng nội dung",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://openapi.zalo.me/v2.0/oa/message",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "access_token", "value": "={{ $vars.ZALO_OA_ACCESS_TOKEN }}" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"recipient\": { \"target\": \"followers\" },\n  \"message\": { \"text\": {{ JSON.stringify($json.oa_text) }} }\n}",
+        "options": {}
+      },
+      "id": "node-zalo",
+      "name": "Zalo OA - Đăng bài",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [960, 300],
+      "notes": "Kiểm tra lại schema broadcast/bài viết theo tài liệu Zalo OA mới nhất. Broadcast có giới hạn quota/tháng."
+    }
+  ],
+  "connections": {
+    "Lịch chạy": { "main": [[{ "node": "Shopify - Lấy sản phẩm", "type": "main", "index": 0 }]] },
+    "Shopify - Lấy sản phẩm": { "main": [[{ "node": "Định dạng nội dung", "type": "main", "index": 0 }]] },
+    "Định dạng nội dung": { "main": [[{ "node": "Zalo OA - Đăng bài", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": {
+    "description": "Mẫu đồng bộ Shopify → Zalo OA. Đặt biến SHOPIFY_SHOP, SHOPIFY_ADMIN_TOKEN, SHOPIFY_STORE_URL, ZALO_OA_ACCESS_TOKEN trong n8n Variables (hoặc đổi sang Credentials)."
+  }
+}
